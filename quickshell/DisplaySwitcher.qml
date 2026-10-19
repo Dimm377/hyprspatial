@@ -151,16 +151,16 @@ PanelWindow {
                             window.laptopRefresh = Math.round(laptop.refreshRate) + "Hz";
                         }
                         if (laptop.make) {
-                            window.laptopDesc = laptop.make + (laptop.model ? (" " + laptop.model) : "");
+                            window.laptopDesc = window.formatCleanMonitorDesc(laptop.make, laptop.model, laptop.description, "Internal Display");
                         } else if (laptop.model) {
-                            window.laptopDesc = laptop.model;
+                            window.laptopDesc = window.sanitizeMonitorDesc(laptop.model);
                         } else {
                             window.laptopDesc = "Internal Display";
                         }
                     }
                     if (ext) {
                         window.extMonitorName = ext.name;
-                        window.extMonitorDesc = (ext.make ? (ext.make + " " + (ext.model || ext.name)) : (ext.model || ext.description || ext.name));
+                        window.extMonitorDesc = window.formatCleanMonitorDesc(ext.make, ext.model, ext.description, ext.name);
                         window.extMonitorRefresh = ext.refreshRate ? (Math.round(ext.refreshRate) + "Hz") : "";
                         if (ext.width && ext.height) {
                             window.extMonitorRes = ext.width + " × " + ext.height;
@@ -249,6 +249,41 @@ PanelWindow {
         onTriggered: {
             window.errorMessage = "";
         }
+    }
+
+    function sanitizeMonitorDesc(raw) {
+        if (!raw) return "";
+        return raw
+            .replace(/(?:,\s*)?\b(?:s\.p\.a|spa|ltd|limited|inc|incorporated|corp|corporation|co|llc|gmbh)\b\.?/gi, " ")
+            .replace(/[,;]/g, " ")
+            .replace(/(?:^|\s)\.+(?:\s|$)/g, " ")
+            .replace(/\.+(\s|$)/g, "$1")
+            .replace(/\s+/g, " ")
+            .trim();
+    }
+
+    function formatCleanMonitorDesc(make, model, desc, fallbackName) {
+        let cleanMake = sanitizeMonitorDesc(make);
+        let cleanModel = sanitizeMonitorDesc(model);
+        let cleanDesc = sanitizeMonitorDesc(desc);
+
+        let combined = "";
+        if (cleanMake && cleanModel) {
+            if (cleanModel.toLowerCase().startsWith(cleanMake.toLowerCase())) {
+                combined = cleanModel;
+            } else {
+                combined = cleanMake + " " + cleanModel;
+            }
+        } else if (cleanModel) {
+            combined = cleanModel;
+        } else if (cleanMake) {
+            combined = cleanMake;
+        } else if (cleanDesc) {
+            combined = cleanDesc;
+        } else {
+            combined = fallbackName || "External Display";
+        }
+        return sanitizeMonitorDesc(combined);
     }
 
     function cycleExtendPosition() {

@@ -80,13 +80,13 @@ Rectangle {
         Text {
             visible: root.errorMessage === ""
             text: root.extMonitorName !== ""
-                ? (root.extMonitorDesc + " • " + root.extMonitorRefresh)
-                : (root.laptopDesc + " (" + root.laptopRefresh + " Only)")
+                ? (root.extMonitorRefresh !== "" ? (root.extMonitorDesc + " • " + root.extMonitorRefresh) : root.extMonitorDesc)
+                : (root.laptopDesc + (root.laptopRefresh !== "" ? (" (" + root.laptopRefresh + " Only)") : ""))
             font.family: root.fontMono
             font.pixelSize: 10
             color: root.themeColors.subtext0 || "#c9c7b6"
             elide: Text.ElideRight
-            Layout.maximumWidth: 260
+            Layout.maximumWidth: 320
         }
     }
 
