@@ -131,7 +131,7 @@ Column {
             Text {
                 text: root.laptopRes + (root.laptopRefresh !== "" ? (" (" + root.laptopRefresh + ")") : "")
                 font.family: root.fontMono
-                font.pixelSize: 8.5
+                font.pixelSize: 9
                 font.letterSpacing: 0.2
                 color: root.isStandby
                     ? Qt.alpha(root.themeColors.subtext1 || "#939182", 0.6)

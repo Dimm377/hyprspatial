@@ -222,7 +222,7 @@ Rectangle {
                     }
                 }
                 font.family: root.fontMono
-                font.pixelSize: 8.5
+                font.pixelSize: 9
                 color: Qt.alpha(root.themeColors.subtext1 || "#939182", 0.8)
             }
         }

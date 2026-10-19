@@ -77,7 +77,7 @@ Item {
                     Text {
                         text: "Mirror Duplicate"
                         font.family: root.fontSans
-                        font.pixelSize: 7.5
+                        font.pixelSize: 8
                         color: root.themeColors.subtext1 || "#939182"
                     }
                 }
