@@ -92,6 +92,7 @@ link_file() {
 chmod +x "$REPO_DIR/scripts/toggle-presentation.sh"
 
 link_file "$REPO_DIR/quickshell/DisplaySwitcher.qml" "$TARGET_QS_DIR/DisplaySwitcher.qml"
+link_file "$REPO_DIR/quickshell/ConfirmDialog.qml" "$TARGET_QS_DIR/ConfirmDialog.qml"
 link_file "$REPO_DIR/scripts/toggle-presentation.sh" "$TARGET_SCRIPTS_DIR/toggle-presentation.sh"
 
 # ─── 3. Print Keybind Setup Instructions ──────────────────────────────────────

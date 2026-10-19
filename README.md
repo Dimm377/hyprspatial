@@ -57,6 +57,17 @@ Most display switchers on Wayland rely on hardcoded monitor names, fixed resolut
   * Comprehensive keyboard navigation (`1-4`, `↑ / ↓`, `Enter`, `Tab`, `S`, `Esc`).
   * Full mouse hover states, interactive mode selection, and quick-swap chip clicking.
 
+* **15-Second Failsafe Auto-Revert Timer:**
+  * Zero risk of black-screen lockouts: captures an active display snapshot before applying any change.
+  * Launches a modern floating confirmation overlay with a real-time 15s countdown and animated progress bar.
+  * If a monitor loses signal, receives an unsupported refresh rate, or the user does not confirm within 15 seconds, the background watchdog automatically reverts the display configuration back to the previous known-good state.
+  * Instant manual confirmation with `Enter` (or `K`) to keep, or `Esc` (or `R`) to revert immediately.
+  * Can be bypassed in custom automation using the `--no-failsafe` flag.
+
+* **Concurrency Protection & Edge-Case Hardening:**
+  * File-locking (`flock`) eliminates race conditions between rapid concurrent hotkey presses.
+  * Robust fallback geometry parsing prevents empty string outputs if monitors disconnect abruptly.
+
 * **Adaptive Studio Color Palette:**
   * Automatically inherits system palette tokens from Serpantinum / Matugen state files (`qs_colors.json` / `qs_matugen_colors.json`) with refined dark studio fallbacks.
 
@@ -168,13 +179,20 @@ The backend script can also be executed directly from the terminal or custom scr
 # Open the GUI overlay
 ~/.config/hypr/scripts/toggle-presentation.sh --gui
 
-# Direct mode applications
+# Direct mode applications (triggers 15s failsafe confirmation)
 ~/.config/hypr/scripts/toggle-presentation.sh --extend left
 ~/.config/hypr/scripts/toggle-presentation.sh --extend right
 ~/.config/hypr/scripts/toggle-presentation.sh --extend top
 ~/.config/hypr/scripts/toggle-presentation.sh --mirror
 ~/.config/hypr/scripts/toggle-presentation.sh --laptop-only
 ~/.config/hypr/scripts/toggle-presentation.sh --projector-only
+
+# Apply immediately without failsafe countdown
+~/.config/hypr/scripts/toggle-presentation.sh --extend left --no-failsafe
+
+# Failsafe control commands
+~/.config/hypr/scripts/toggle-presentation.sh --confirm   # Keep current changes
+~/.config/hypr/scripts/toggle-presentation.sh --revert    # Revert to previous snapshot immediately
 ```
 
 ---

@@ -137,13 +137,15 @@ PanelWindow {
     // Detect monitors
     Process {
         id: detectProc
-        command: ["bash", "-c", "hyprctl monitors all -j"]
+        command: ["bash", "-c", "hyprctl monitors all -j 2>/dev/null || hyprctl monitors -j 2>/dev/null || echo '[]'"]
         running: true
         stdout: StdioCollector {
             id: detectOut
             onStreamFinished: {
                 try {
-                    let mons = JSON.parse(detectOut.text);
+                    let raw = detectOut.text.trim();
+                    if (!raw) return;
+                    let mons = JSON.parse(raw);
                     let ext = null;
                     let laptop = null;
 
