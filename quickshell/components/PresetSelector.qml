@@ -47,9 +47,8 @@ Rectangle {
             height: rowHeight
             y: root.selectedIndex * (rowHeight + 4)
             radius: 6
-            color: Qt.alpha(root.themeColors.surface1 || "#2b2a22", 0.70)
-            border.width: 1
-            border.color: Qt.alpha(root.themeColors.mauve || "#cacb77", 0.45)
+            color: Qt.alpha(root.themeColors.surface1 || "#2b2a22", 0.65)
+            border.width: 0
 
             Behavior on y {
                 NumberAnimation {
@@ -83,18 +82,6 @@ Rectangle {
 
                     scale: itemMa.pressed ? 0.985 : 1.0
                     Behavior on scale { NumberAnimation { duration: 100; easing.type: Easing.OutCubic } }
-
-                    // Active indicator tick on left edge
-                    Rectangle {
-                        visible: presetItem.isCurrent
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        anchors.margins: 6
-                        width: 2.5
-                        radius: 1.25
-                        color: root.themeColors.mauve || "#cacb77"
-                    }
 
                     RowLayout {
                         z: 1

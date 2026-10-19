@@ -3,7 +3,7 @@ import QtQuick
 Canvas {
     id: root
     anchors.fill: parent
-    z: 0
+    z: 1
 
     property var themeColors: ({})
     property bool active: false
@@ -37,38 +37,52 @@ Canvas {
         let lx = startX;
         let ly = startY;
         let currentTx = lx + (targetX - lx) * (0.35 + 0.65 * beamSpread);
-        let currentHalfH = targetHalfHeight * Math.max(0.08, beamSpread);
-        let tyTop = targetYCenter - currentHalfH;
-        let tyBottom = targetYCenter + currentHalfH;
+        let currentHalfH = targetHalfHeight * Math.max(0.10, beamSpread);
+        let currentTargetY = ly + (targetYCenter - ly) * (0.35 + 0.65 * beamSpread);
+        let tyTop = currentTargetY - currentHalfH;
+        let tyBottom = currentTargetY + currentHalfH;
 
         let mColor = Qt.color(root.themeColors.mauve || "#cacb77");
         let mr = mColor.r;
         let mg = mColor.g;
         let mb = mColor.b;
 
-        let grad = ctx.createLinearGradient(lx, ly, currentTx, ly);
-        grad.addColorStop(0.0, Qt.rgba(mr, mg, mb, 0.15));
-        grad.addColorStop(0.55, Qt.rgba(mr, mg, mb, 0.04));
+        // 1. Soft glowing projection light cone gradient
+        let grad = ctx.createLinearGradient(lx, ly, currentTx, currentTargetY);
+        grad.addColorStop(0.0, Qt.rgba(mr, mg, mb, 0.24));
+        grad.addColorStop(0.35, Qt.rgba(mr, mg, mb, 0.10));
+        grad.addColorStop(0.75, Qt.rgba(mr, mg, mb, 0.03));
         grad.addColorStop(1.0, Qt.rgba(mr, mg, mb, 0.0));
 
         ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.moveTo(lx, ly - 4);
+        ctx.moveTo(lx, ly - 6);
         ctx.lineTo(currentTx, tyTop);
         ctx.lineTo(currentTx, tyBottom);
-        ctx.lineTo(lx, ly + 4);
+        ctx.lineTo(lx, ly + 6);
         ctx.closePath();
         ctx.fill();
 
-        let lineGrad = ctx.createLinearGradient(lx, ly, currentTx, ly);
-        lineGrad.addColorStop(0.0, Qt.rgba(mr, mg, mb, 0.20));
-        lineGrad.addColorStop(0.75, Qt.rgba(mr, mg, mb, 0.02));
+        // 2. Focused central projection ray
+        let lineGrad = ctx.createLinearGradient(lx, ly, currentTx, currentTargetY);
+        lineGrad.addColorStop(0.0, Qt.rgba(mr, mg, mb, 0.35));
+        lineGrad.addColorStop(0.60, Qt.rgba(mr, mg, mb, 0.08));
         lineGrad.addColorStop(1.0, Qt.rgba(mr, mg, mb, 0.0));
         ctx.strokeStyle = lineGrad;
-        ctx.lineWidth = 1;
+        ctx.lineWidth = 1.2;
         ctx.beginPath();
         ctx.moveTo(lx, ly);
-        ctx.lineTo(currentTx, ly);
+        ctx.lineTo(currentTx, currentTargetY);
         ctx.stroke();
+
+        // 3. Luminous lens aperture glow highlight
+        let lensGlow = ctx.createRadialGradient(lx, ly, 1, lx, ly, 9);
+        lensGlow.addColorStop(0.0, Qt.rgba(mr, mg, mb, 0.55));
+        lensGlow.addColorStop(0.40, Qt.rgba(mr, mg, mb, 0.20));
+        lensGlow.addColorStop(1.0, Qt.rgba(mr, mg, mb, 0.0));
+        ctx.fillStyle = lensGlow;
+        ctx.beginPath();
+        ctx.arc(lx, ly, 9, 0, 2 * Math.PI);
+        ctx.fill();
     }
 }

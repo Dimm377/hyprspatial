@@ -95,7 +95,7 @@ Rectangle {
                 // ─── 1. EXTERNAL DISPLAY SLOT (Monitor Stand OR Projector) ───
                 Item {
                     id: extSlot
-                    z: 1
+                    z: 2
                     width: 164
                     height: 104
                     x: {
@@ -150,6 +150,7 @@ Rectangle {
                 // ─── 2. LAPTOP DISPLAY SLOT (Lid + Chassis & Touchpad Notch) ───
                 LaptopSlot {
                     id: laptopSlot
+                    z: 2
                     themeColors: root.themeColors
                     fontSans: root.fontSans
                     fontMono: root.fontMono

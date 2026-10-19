@@ -13,8 +13,8 @@ Item {
     property string previewMode: "mirror"
     property string extMonitorName: ""
 
-    readonly property real lensX: x + width - 8
-    readonly property real lensY: y + 25
+    readonly property real lensX: width - 8
+    readonly property real lensY: 25
 
     y: (root.previewMode === "mirror") ? (parent.height - height) : (parent.height - height + 6)
     visible: opacity > 0.01
@@ -87,18 +87,24 @@ Item {
                     width: 24
                     height: 24
                     radius: 12
-                    color: Qt.alpha(root.themeColors.surface1 || "#2b2a22", 0.9)
+                    color: Qt.alpha(root.themeColors.surface1 || "#2b2a22", 0.95)
                     border.width: 1.5
-                    border.color: Qt.alpha(root.themeColors.mauve || "#cacb77", 0.5)
+                    border.color: (root.previewMode === "mirror")
+                        ? (root.themeColors.mauve || "#cacb77")
+                        : Qt.alpha(root.themeColors.mauve || "#cacb77", 0.5)
 
                     Rectangle {
                         anchors.centerIn: parent
                         width: 12
                         height: 12
                         radius: 6
-                        color: Qt.alpha(root.themeColors.mauve || "#cacb77", 0.25)
+                        color: (root.previewMode === "mirror")
+                            ? Qt.alpha(root.themeColors.mauve || "#cacb77", 0.60)
+                            : Qt.alpha(root.themeColors.mauve || "#cacb77", 0.25)
                         border.width: 1
-                        border.color: Qt.alpha(root.themeColors.mauve || "#cacb77", 0.45)
+                        border.color: (root.previewMode === "mirror")
+                            ? (root.themeColors.text || "#e6e3d5")
+                            : Qt.alpha(root.themeColors.mauve || "#cacb77", 0.45)
                     }
                 }
             }
