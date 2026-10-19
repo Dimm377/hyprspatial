@@ -70,7 +70,7 @@ link_file() {
 
     if [ -L "$dest" ]; then
         local current_target
-        current_target="$(readlink -f "$dest")"
+        current_target="$(readlink -f "$dest" 2>/dev/null || true)"
         if [ "$current_target" = "$src" ]; then
             echo -e "  ${GREEN}[✓]${NC} Symlink already in place: ${BLUE}$dest${NC}"
             return

@@ -28,7 +28,7 @@ unlink_and_restore() {
 
     if [ -L "$target" ]; then
         local current_target
-        current_target="$(readlink -f "$target")"
+        current_target="$(readlink -f "$target" 2>/dev/null || true)"
         if [[ "$current_target" == "$REPO_DIR"* ]]; then
             rm -f "$target"
             echo -e "  ${GREEN}[✓]${NC} Removed symlink: ${BLUE}$target${NC}"
