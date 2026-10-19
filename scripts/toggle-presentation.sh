@@ -75,10 +75,23 @@ if [ -z "$LAP_MODE" ] || [ "$LAP_MODE" = "null" ]; then
 fi
 
 # Dynamic monitor dimensions with robust fallbacks
-EXT_W=$(echo "$MONS_JSON" | jq -r --arg m "$EXT_MON" '([.[] | select(.name == $m) | .width] | first) // 1920')
-EXT_H=$(echo "$MONS_JSON" | jq -r --arg m "$EXT_MON" '([.[] | select(.name == $m) | .height] | first) // 1080')
-LAP_W=$(echo "$MONS_JSON" | jq -r --arg m "$LAPTOP_MON" '([.[] | select(.name == $m) | .width] | first) // 1920')
-LAP_H=$(echo "$MONS_JSON" | jq -r --arg m "$LAPTOP_MON" '([.[] | select(.name == $m) | .height] | first) // 1080')
+EXT_W=$(echo "$MONS_JSON" | jq -r --arg m "$EXT_MON" '([.[] | select(.name == $m) | if .width and .width > 0 then .width else empty end] | first) // empty')
+EXT_H=$(echo "$MONS_JSON" | jq -r --arg m "$EXT_MON" '([.[] | select(.name == $m) | if .height and .height > 0 then .height else empty end] | first) // empty')
+LAP_W=$(echo "$MONS_JSON" | jq -r --arg m "$LAPTOP_MON" '([.[] | select(.name == $m) | if .width and .width > 0 then .width else empty end] | first) // empty')
+LAP_H=$(echo "$MONS_JSON" | jq -r --arg m "$LAPTOP_MON" '([.[] | select(.name == $m) | if .height and .height > 0 then .height else empty end] | first) // empty')
+
+if [ -z "$EXT_W" ] || [ "$EXT_W" -le 0 ] 2>/dev/null; then
+    EXT_W=$(echo "$EXT_MODE" | grep -o '^[0-9]\+' || echo "1920")
+fi
+if [ -z "$EXT_H" ] || [ "$EXT_H" -le 0 ] 2>/dev/null; then
+    EXT_H=$(echo "$EXT_MODE" | grep -o 'x[0-9]\+' | tr -d 'x' || echo "1080")
+fi
+if [ -z "$LAP_W" ] || [ "$LAP_W" -le 0 ] 2>/dev/null; then
+    LAP_W=$(echo "$LAP_MODE" | grep -o '^[0-9]\+' || echo "1920")
+fi
+if [ -z "$LAP_H" ] || [ "$LAP_H" -le 0 ] 2>/dev/null; then
+    LAP_H=$(echo "$LAP_MODE" | grep -o 'x[0-9]\+' | tr -d 'x' || echo "1080")
+fi
 
 EXT_W="${EXT_W:-1920}"
 EXT_H="${EXT_H:-1080}"
@@ -165,14 +178,14 @@ apply_revert() {
 
     hyprctl dismissnotify -1 >/dev/null 2>&1
     if [ "$IS_LUA" = true ]; then
-        echo "$PREV_JSON" | jq -r '
+        echo "$PREV_JSON" | jq -r --arg icc "$ICC_OPT" '
           .[] |
           if .disabled then
             "hl.monitor({ output = \"" + .name + "\", disabled = true })"
           elif (.mirrorOf != "none" and (.mirrorOf | length > 0)) then
             "hl.monitor({ output = \"" + .name + "\", mode = \"preferred\", position = \"auto\", scale = " + (.scale|tostring) + ", mirror = \"" + .mirrorOf + "\", disabled = false })"
           else
-            "hl.monitor({ output = \"" + .name + "\", mode = \"" + (.width|tostring) + "x" + (.height|tostring) + "@" + ((.refreshRate|round)|tostring) + "\", position = \"" + (.x|tostring) + "x" + (.y|tostring) + "\", scale = " + (.scale|tostring) + ", mirror = \"\", disabled = false })"
+            "hl.monitor({ output = \"" + .name + "\", mode = \"" + (.width|tostring) + "x" + (.height|tostring) + "@" + ((.refreshRate|round)|tostring) + "\", position = \"" + (.x|tostring) + "x" + (.y|tostring) + "\", scale = " + (.scale|tostring) + ", mirror = \"\", disabled = false" + (if .name | test("^(eDP|LVDS|DSI)") then "" else $icc end) + " })"
           end
         ' | while read -r cmd; do
             [ -n "$cmd" ] && hyprctl eval "$cmd" >/dev/null 2>&1

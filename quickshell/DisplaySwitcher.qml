@@ -63,20 +63,20 @@ PanelWindow {
 
     function getModeDesc(item) {
         if (item.modeId === "extend") {
-            if (window.extendPosition === "right") return "Laptop on left · External on right";
-            if (window.extendPosition === "top") return "External on top · Laptop below";
-            return "External on left · Laptop on right";
+            if (window.extendPosition === "right") return "Laptop on left (0x0) · External on right (+1920x0)";
+            if (window.extendPosition === "top") return "External on top (0x0) · Laptop below (+1080y)";
+            return "External on left (0x0) · Laptop on right (+1920x0)";
         }
         return item.desc;
     }
 
     readonly property var modesList: [
         {
-            modeId: "extend",
-            arg: "--extend",
-            key: "3",
-            title: "Extend Desktop",
-            desc: "External on left · Laptop on right"
+            modeId: "laptop_only",
+            arg: "--laptop-only",
+            key: "1",
+            title: "Laptop Screen Only",
+            desc: "Internal display only · external powered off"
         },
         {
             modeId: "mirror",
@@ -86,11 +86,11 @@ PanelWindow {
             desc: "Duplicate laptop screen onto external display"
         },
         {
-            modeId: "laptop_only",
-            arg: "--laptop-only",
-            key: "1",
-            title: "Laptop Screen Only",
-            desc: "Internal display only · external powered off"
+            modeId: "extend",
+            arg: "--extend",
+            key: "3",
+            title: "Extend Desktop",
+            desc: "External on left (0x0) · Laptop on right (+1920x0)"
         },
         {
             modeId: "projector_only",
@@ -809,11 +809,11 @@ PanelWindow {
                                                     Text {
                                                         text: {
                                                             if (monitorContainer.isStandby) return "off";
-                                                            if (window.previewMode === "projector_only") return "primary";
+                                                            if (window.previewMode === "projector_only") return "primary (0x0)";
                                                             if (window.previewMode === "extend") {
-                                                                if (window.extendPosition === "right") return "primary →";
-                                                                if (window.extendPosition === "top") return "↑ primary";
-                                                                return "← primary";
+                                                                if (window.extendPosition === "right") return "right (+1920x0)";
+                                                                if (window.extendPosition === "top") return "top (0x0)";
+                                                                return "left (0x0)";
                                                             }
                                                             return "external";
                                                         }
@@ -1080,11 +1080,11 @@ PanelWindow {
                                                     text: {
                                                         if (laptopContainer.isStandby) return "off";
                                                         if (window.previewMode === "extend") {
-                                                            if (window.extendPosition === "right") return "← extended";
-                                                            if (window.extendPosition === "top") return "↓ extended";
-                                                            return "→ extended";
+                                                            if (window.extendPosition === "right") return "left (0x0)";
+                                                            if (window.extendPosition === "top") return "below (+1080y)";
+                                                            return "right (+1920x0)";
                                                         }
-                                                        return "primary";
+                                                        return "primary (0x0)";
                                                     }
                                                     font.family: window.fontSans
                                                     font.pixelSize: window.s(8)
@@ -1364,9 +1364,13 @@ PanelWindow {
                                                     color: window.themeColors.mauve || "#cacb77"
                                                 }
                                                 Text {
-                                                    text: window.extendPosition.toUpperCase()
+                                                    text: {
+                                                        if (window.extendPosition === "right") return "EXT ON RIGHT";
+                                                        if (window.extendPosition === "top") return "EXT ON TOP";
+                                                        return "EXT ON LEFT";
+                                                    }
                                                     font.family: window.fontMono
-                                                    font.pixelSize: window.s(8.5)
+                                                    font.pixelSize: window.s(8)
                                                     font.weight: Font.Bold
                                                     color: window.themeColors.text || "#e6e3d5"
                                                 }
