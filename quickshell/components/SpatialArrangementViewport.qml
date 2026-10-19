@@ -21,27 +21,11 @@ Rectangle {
     property string laptopRes: "1920 × 1080"
     property string laptopRefresh: ""
 
-    function parseResWidth(resStr) {
-        let parts = (resStr || "").split("×");
-        return parts.length > 0 ? parseInt(parts[0].trim()) || 1920 : 1920;
-    }
-
-    function parseResHeight(resStr) {
-        let parts = (resStr || "").split("×");
-        return parts.length > 1 ? parseInt(parts[1].trim()) || 1080 : 1080;
-    }
-
-    ColumnLayout {
+    // Spatial Geometry Canvas Container
+    Item {
+        id: canvasContainer
         anchors.fill: parent
         anchors.margins: 16
-        spacing: 8
-
-
-        // Spatial Geometry Canvas Container
-        Item {
-            id: canvasContainer
-            Layout.fillWidth: true
-            Layout.fillHeight: true
 
             // Elevated Surface with Soft Drop Shadow
             Rectangle {
@@ -164,37 +148,4 @@ Rectangle {
                 }
             }
         }
-
-        // Spatial Bounds Footer
-        RowLayout {
-            Layout.fillWidth: true
-
-            Text {
-                text: {
-                    if (root.previewMode === "extend") {
-                        let w1 = root.parseResWidth(root.extMonitorRes);
-                        let w2 = root.parseResWidth(root.laptopRes);
-                        let h1 = root.parseResHeight(root.extMonitorRes);
-                        let h2 = root.parseResHeight(root.laptopRes);
-                        if (root.extendPosition === "top") {
-                            let maxW = Math.max(w1, w2);
-                            let totalH = h1 + h2;
-                            return "Canvas: " + maxW + " × " + totalH + " px (stacked)";
-                        } else {
-                            let maxH = Math.max(h1, h2);
-                            return "Canvas: " + (w1 + w2) + " × " + maxH + " px (extended)";
-                        }
-                    } else if (root.previewMode === "mirror") {
-                        return "Presentation: duplicated display stream";
-                    } else {
-                        let res = (root.previewMode === "projector_only") ? root.extMonitorRes : root.laptopRes;
-                        return "Display: " + (res || "1920 × 1080") + " px (single)";
-                    }
-                }
-                font.family: root.fontMono
-                font.pixelSize: 9
-                color: Qt.alpha(root.themeColors.subtext1 || "#939182", 0.8)
-            }
-        }
     }
-}
