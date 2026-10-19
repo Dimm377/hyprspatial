@@ -406,8 +406,8 @@ PanelWindow {
         height: implicitHeight
         radius: window.s(12)
         color: Qt.alpha(window.themeColors.base || "#0f0f07", 0.98)
-        border.width: 0
-        border.color: "transparent"
+        border.width: 1
+        border.color: Qt.alpha(window.themeColors.surface1 || "#2b2a22", 0.65)
         clip: true
 
         scale: 0.98
@@ -548,6 +548,8 @@ PanelWindow {
                             font.family: window.fontMono
                             font.pixelSize: window.s(10)
                             color: window.themeColors.subtext0 || "#c9c7b6"
+                            elide: Text.ElideRight
+                            Layout.maximumWidth: window.s(260)
                         }
                     }
 
@@ -590,10 +592,10 @@ PanelWindow {
                                     return "External display only";
                                 }
                                 font.family: window.fontSans
-                                font.pixelSize: window.s(9)
+                                font.pixelSize: window.s(9.5)
                                 font.weight: Font.Normal
-                                color: Qt.alpha(window.themeColors.subtext1 || "#939182", 0.8)
-                                opacity: (window.previewMode !== window.currentMode) ? 1.0 : 0.7
+                                color: window.themeColors.subtext0 || "#c9c7b6"
+                                opacity: (window.previewMode !== window.currentMode) ? 1.0 : 0.75
                                 Behavior on opacity { NumberAnimation { duration: 150 } }
                             }
                             Item { Layout.fillWidth: true }
@@ -868,10 +870,11 @@ PanelWindow {
                                             Text {
                                                 text: window.extMonitorRes + (window.extMonitorRefresh !== "" ? (" (" + window.extMonitorRefresh + ")") : "")
                                                 font.family: window.fontMono
-                                                font.pixelSize: window.s(7.5)
+                                                font.pixelSize: window.s(8.5)
+                                                font.letterSpacing: 0.2
                                                 color: monitorContainer.isStandby
-                                                    ? Qt.alpha(window.themeColors.subtext1 || "#939182", 0.55)
-                                                    : Qt.alpha(window.themeColors.subtext1 || "#939182", 0.75)
+                                                    ? Qt.alpha(window.themeColors.subtext1 || "#939182", 0.6)
+                                                    : Qt.alpha(window.themeColors.subtext1 || "#939182", 0.85)
                                             }
                                         }
                                     }
@@ -1153,10 +1156,11 @@ PanelWindow {
                                         Text {
                                             text: window.laptopRes + (window.laptopRefresh !== "" ? (" (" + window.laptopRefresh + ")") : "")
                                             font.family: window.fontMono
-                                            font.pixelSize: window.s(7.5)
+                                            font.pixelSize: window.s(8.5)
+                                            font.letterSpacing: 0.2
                                             color: laptopContainer.isStandby
-                                                ? Qt.alpha(window.themeColors.subtext1 || "#939182", 0.55)
-                                                : Qt.alpha(window.themeColors.subtext1 || "#939182", 0.75)
+                                                ? Qt.alpha(window.themeColors.subtext1 || "#939182", 0.6)
+                                                : Qt.alpha(window.themeColors.subtext1 || "#939182", 0.85)
                                         }
                                     }
                                 }
@@ -1412,13 +1416,19 @@ PanelWindow {
 
                                         // Interactive Position Swap Chip (for Extend Desktop mode)
                                         Rectangle {
+                                            id: posChip
                                             visible: modelData.modeId === "extend" && presetItem.isAvailable
                                             implicitHeight: window.s(18)
                                             implicitWidth: posChipLayout.implicitWidth + window.s(12)
                                             radius: window.s(4)
-                                            color: presetItem.isFocused
-                                                ? Qt.alpha(window.themeColors.surface2 || "#36352c", 0.95)
-                                                : Qt.alpha(window.themeColors.surface1 || "#2b2a22", 0.75)
+                                            scale: posChipMa.pressed ? 0.94 : (posChipMa.containsMouse ? 1.03 : 1.0)
+                                            Behavior on scale { NumberAnimation { duration: 100; easing.type: Easing.OutCubic } }
+
+                                            color: posChipMa.pressed
+                                                ? Qt.alpha(window.themeColors.mauve || "#cacb77", 0.25)
+                                                : (presetItem.isFocused
+                                                    ? Qt.alpha(window.themeColors.surface2 || "#36352c", 0.95)
+                                                    : Qt.alpha(window.themeColors.surface1 || "#2b2a22", 0.75))
                                             border.width: 1
                                             border.color: presetItem.isFocused
                                                 ? Qt.alpha(window.themeColors.mauve || "#cacb77", 0.5)
@@ -1445,7 +1455,9 @@ PanelWindow {
                                             }
 
                                             MouseArea {
+                                                id: posChipMa
                                                 anchors.fill: parent
+                                                hoverEnabled: true
                                                 cursorShape: Qt.PointingHandCursor
                                                 onClicked: (mouse) => {
                                                     mouse.accepted = true;

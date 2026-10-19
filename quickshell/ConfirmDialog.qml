@@ -181,9 +181,40 @@ PanelWindow {
                 Layout.fillWidth: true
                 spacing: confirmWindow.s(8)
 
-                Text {
-                    text: "🖥️"
-                    font.pixelSize: confirmWindow.s(16)
+                // Geometric Revert Indicator (replaces emoji AI-tell)
+                Item {
+                    width: confirmWindow.s(20)
+                    height: confirmWindow.s(20)
+
+                    Rectangle {
+                        anchors.fill: parent
+                        radius: confirmWindow.s(5)
+                        color: confirmWindow.countdown <= 5
+                            ? Qt.alpha(confirmWindow.themeColors.peach || "#f38ba8", 0.15)
+                            : Qt.alpha(confirmWindow.themeColors.mauve || "#cacb77", 0.12)
+                        border.width: 1
+                        border.color: confirmWindow.countdown <= 5
+                            ? Qt.alpha(confirmWindow.themeColors.peach || "#f38ba8", 0.5)
+                            : Qt.alpha(confirmWindow.themeColors.mauve || "#cacb77", 0.4)
+
+                        // Inner pulsing core LED
+                        Rectangle {
+                            anchors.centerIn: parent
+                            width: confirmWindow.s(6)
+                            height: confirmWindow.s(6)
+                            radius: confirmWindow.s(3)
+                            color: confirmWindow.countdown <= 5
+                                ? (confirmWindow.themeColors.peach || "#f38ba8")
+                                : (confirmWindow.themeColors.mauve || "#cacb77")
+
+                            SequentialAnimation on opacity {
+                                running: true
+                                loops: Animation.Infinite
+                                NumberAnimation { from: 0.4; to: 1.0; duration: 600; easing.type: Easing.InOutQuad }
+                                NumberAnimation { from: 1.0; to: 0.4; duration: 600; easing.type: Easing.InOutQuad }
+                            }
+                        }
+                    }
                 }
 
                 Text {
@@ -275,6 +306,8 @@ PanelWindow {
                     Layout.fillWidth: true
                     Layout.preferredHeight: confirmWindow.s(32)
                     radius: confirmWindow.s(6)
+                    scale: revertMa.pressed ? 0.98 : (revertMa.containsMouse ? 1.01 : 1.0)
+                    Behavior on scale { NumberAnimation { duration: 100; easing.type: Easing.OutCubic } }
                     color: revertMa.pressed
                         ? Qt.alpha(confirmWindow.themeColors.surface2 || "#36352c", 0.95)
                         : (revertMa.containsMouse
@@ -326,6 +359,8 @@ PanelWindow {
                     Layout.fillWidth: true
                     Layout.preferredHeight: confirmWindow.s(32)
                     radius: confirmWindow.s(6)
+                    scale: keepMa.pressed ? 0.98 : (keepMa.containsMouse ? 1.01 : 1.0)
+                    Behavior on scale { NumberAnimation { duration: 100; easing.type: Easing.OutCubic } }
                     color: keepMa.pressed
                         ? Qt.alpha(confirmWindow.themeColors.mauve || "#cacb77", 0.35)
                         : (keepMa.containsMouse
