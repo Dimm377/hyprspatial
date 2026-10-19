@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Effects
 import QtCore
 import Quickshell
 import Quickshell.Wayland
@@ -367,22 +368,44 @@ PanelWindow {
         }
     }
 
-    // Main Studio Card
-    Rectangle {
+    // Main Studio Card Container
+    Item {
         id: mainCard
         anchors.centerIn: parent
         implicitWidth: 740
         implicitHeight: 330
         width: implicitWidth
         height: implicitHeight
-        radius: 12
-        color: Qt.alpha(window.themeColors.base || "#0f0f07", 0.98)
-        border.width: 1
-        border.color: Qt.alpha(window.themeColors.surface1 || "#2b2a22", 0.65)
-        clip: true
 
         scale: 0.98
         opacity: 0.0
+
+        // Elevated Soft Drop Shadow Surface
+        Rectangle {
+            anchors.fill: parent
+            radius: 12
+            color: window.themeColors.base || "#0f0f07"
+            border.width: 0
+
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                shadowEnabled: true
+                shadowColor: "#000000"
+                shadowOpacity: 0.45
+                shadowBlur: 0.8
+                shadowVerticalOffset: 6
+                shadowHorizontalOffset: 0
+            }
+        }
+
+        // Main Studio Card Surface
+        Rectangle {
+            id: mainCardSurface
+            anchors.fill: parent
+            radius: 12
+            color: Qt.alpha(window.themeColors.base || "#0f0f07", 0.98)
+            border.width: 0
+            clip: true
 
         focus: true
         Component.onCompleted: mainCard.forceActiveFocus()
@@ -513,4 +536,5 @@ PanelWindow {
             }
         }
     }
+}
 }

@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Effects
 import QtCore
 import Quickshell
 import Quickshell.Wayland
@@ -129,22 +130,44 @@ PanelWindow {
         }
     }
 
-    // Centered Confirmation Dialog
-    Rectangle {
+    // Centered Confirmation Dialog Container
+    Item {
         id: dialogCard
         anchors.centerIn: parent
         implicitWidth: confirmWindow.s(410)
         implicitHeight: confirmWindow.s(156)
         width: implicitWidth
         height: implicitHeight
-        radius: confirmWindow.s(10)
-        color: Qt.alpha(confirmWindow.themeColors.base || "#0f0f07", 0.98)
-        border.width: 1
-        border.color: Qt.alpha(confirmWindow.themeColors.surface1 || "#2b2a22", 0.55)
-        clip: true
 
         scale: 0.98
         opacity: 0.0
+
+        // Elevated Soft Drop Shadow Surface
+        Rectangle {
+            anchors.fill: parent
+            radius: confirmWindow.s(10)
+            color: confirmWindow.themeColors.base || "#0f0f07"
+            border.width: 0
+
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                shadowEnabled: true
+                shadowColor: "#000000"
+                shadowOpacity: 0.45
+                shadowBlur: 0.8
+                shadowVerticalOffset: confirmWindow.s(6)
+                shadowHorizontalOffset: 0
+            }
+        }
+
+        // Dialog Surface
+        Rectangle {
+            id: dialogCardSurface
+            anchors.fill: parent
+            radius: confirmWindow.s(10)
+            color: Qt.alpha(confirmWindow.themeColors.base || "#0f0f07", 0.98)
+            border.width: 0
+            clip: true
 
         focus: true
         Component.onCompleted: dialogCard.forceActiveFocus()
@@ -313,3 +336,5 @@ PanelWindow {
         }
     }
 }
+}
+
