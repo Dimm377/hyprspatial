@@ -55,6 +55,7 @@ unlink_and_restore() {
 
 unlink_and_restore "$TARGET_QS_FILE"
 unlink_and_restore "$TARGET_QS_DIR/ConfirmDialog.qml"
+unlink_and_restore "$TARGET_QS_DIR/components"
 unlink_and_restore "$TARGET_SCRIPT_FILE"
 
 # Clean up display-switcher directory if empty
