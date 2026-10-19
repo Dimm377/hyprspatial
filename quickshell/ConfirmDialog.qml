@@ -181,7 +181,7 @@ PanelWindow {
                 Layout.fillWidth: true
                 spacing: confirmWindow.s(8)
 
-                // Geometric Revert Indicator (replaces emoji AI-tell)
+                // Status indicator
                 Item {
                     width: confirmWindow.s(20)
                     height: confirmWindow.s(20)
