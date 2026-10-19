@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# hypr-display-switcher Uninstaller
-# Cleans up symlinks and restores previous backups
+# Uninstaller for hypr-display-switcher
+# Cleans up symlinks and restores backups
 # ==============================================================================
 
 set -euo pipefail

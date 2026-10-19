@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# hypr-display-switcher Installer
-# Modern, hardware-agnostic display manager overlay for Hyprland
+# Installer for hypr-display-switcher
 # ==============================================================================
 
 set -euo pipefail

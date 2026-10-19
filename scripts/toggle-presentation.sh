@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
-# ============================================================
-# Hyprland Presentation & Display Switcher Script
-# 100% Dynamic Hardware Detection & Multi-Position Extend Support
-# Supports: Mirror, Extend (Left / Right / Top), Laptop Only, External Only, GUI
-# Security: 15-Second Failsafe Auto-Revert Engine & State Snapshot
-# ============================================================
+# Hyprland display switcher and presentation toggle
 
 STATE_FILE="/tmp/hypr_display_switcher_prev_state.json"
 CONFIRM_FILE="/tmp/hypr_display_confirmed"
