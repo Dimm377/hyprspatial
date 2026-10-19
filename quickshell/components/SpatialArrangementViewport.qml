@@ -36,37 +36,6 @@ Rectangle {
         anchors.margins: 16
         spacing: 8
 
-        // Mode Context Label (Human Sans-Serif)
-        RowLayout {
-            Layout.fillWidth: true
-            Text {
-                text: {
-                    if (root.previewMode === "extend") {
-                        return "Dual display — extended (" + (root.extendPosition === "left" ? "left" : (root.extendPosition === "right" ? "right" : "top")) + ")";
-                    }
-                    if (root.previewMode === "mirror") return "Presentation — mirrored display";
-                    if (root.previewMode === "laptop_only") return "Internal display only";
-                    return "External display only";
-                }
-                font.family: root.fontSans
-                font.pixelSize: 10
-                font.weight: Font.Normal
-                color: root.themeColors.subtext0 || "#c9c7b6"
-                opacity: (root.previewMode !== root.currentMode) ? 1.0 : 0.75
-                Behavior on opacity { NumberAnimation { duration: 150 } }
-            }
-            Item { Layout.fillWidth: true }
-            // "Previewing" badge
-            Text {
-                visible: (root.previewMode !== root.currentMode)
-                text: "preview"
-                font.family: root.fontMono
-                font.pixelSize: 8
-                color: Qt.alpha(root.themeColors.mauve || "#cacb77", 0.65)
-                opacity: visible ? 1.0 : 0.0
-                Behavior on opacity { NumberAnimation { duration: 150 } }
-            }
-        }
 
         // Spatial Geometry Canvas Container
         Item {
