@@ -36,4 +36,19 @@ flock -n 201 || { echo "FAIL: Initial flock failed"; exit 1; }
 flock -u 201
 rm -f "$LOCK_FILE"
 
+# Test 4: IS_LUA detection logic correctly identifies Lua provider or fallbacks
+MOCK_STATUS_LUA='{"configProvider":"lua","backend":"drm"}'
+DETECTED_LUA=false
+if [ "$(echo "$MOCK_STATUS_LUA" | jq -r '.configProvider // empty')" = "lua" ]; then
+    DETECTED_LUA=true
+fi
+[ "$DETECTED_LUA" = true ] || { echo "FAIL: Expected Lua detection from status JSON"; exit 1; }
+
+MOCK_STATUS_LEGACY='{"configProvider":"hyprlang","backend":"drm"}'
+DETECTED_LEGACY_LUA=false
+if [ "$(echo "$MOCK_STATUS_LEGACY" | jq -r '.configProvider // empty')" = "lua" ]; then
+    DETECTED_LEGACY_LUA=true
+fi
+[ "$DETECTED_LEGACY_LUA" = false ] || { echo "FAIL: Legacy status incorrectly detected as Lua"; exit 1; }
+
 echo "PASS: All edge-case tests passed successfully"

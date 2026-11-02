@@ -40,7 +40,11 @@ EXT_MON=$(echo "$MONS_JSON" | jq -r --arg lap "$LAPTOP_MON" '.[] | select(.name 
 
 # Check whether Hyprland is using Lua parser or legacy config
 IS_LUA=false
-if hyprctl keyword dummy test 2>&1 | grep -q "non-legacy"; then
+if [ "$(hyprctl status -j 2>/dev/null | jq -r '.configProvider // empty')" = "lua" ]; then
+    IS_LUA=true
+elif hyprctl status 2>/dev/null | grep -q "configProvider: lua"; then
+    IS_LUA=true
+elif hyprctl keyword dummy test 2>&1 | grep -qE "non-legacy|unknown request"; then
     IS_LUA=true
 fi
 
