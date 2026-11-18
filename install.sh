@@ -77,7 +77,8 @@ link_file() {
         fi
     fi
 
-    if [ -f "$dest" ] && [ ! -L "$dest" ]; then
+    # Directories too: ln -sfn onto a real directory would create the link inside it
+    if [ -e "$dest" ] && [ ! -L "$dest" ]; then
         local backup="${dest}.bak.$(date +%Y%m%d%H%M%S)"
         echo -e "  ${YELLOW}[!]${NC} Backing up existing $base to: ${YELLOW}$backup${NC}"
         mv "$dest" "$backup"

@@ -46,8 +46,8 @@ unlink_and_restore() {
 
     # Check for latest backup to restore
     local latest_bak
-    latest_bak=$(ls -1t "${target}.bak."* 2>/dev/null | head -n 1 || true)
-    if [ -n "$latest_bak" ] && [ -f "$latest_bak" ]; then
+    latest_bak=$(ls -1td "${target}.bak."* 2>/dev/null | head -n 1 || true)
+    if [ -n "$latest_bak" ] && [ -e "$latest_bak" ]; then
         echo -e "  ${GREEN}[✓]${NC} Restoring backup from: ${GREEN}$latest_bak${NC}"
         mv "$latest_bak" "$target"
     fi

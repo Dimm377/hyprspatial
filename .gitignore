@@ -3,3 +3,7 @@
 *.tmp
 *.log
 .DS_Store
+
+# Local-only: agent instructions and test suite
+CLAUDE.md
+tests/
