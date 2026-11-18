@@ -16,14 +16,14 @@ The project separates visual presentation from hardware configuration:
 
 - **Frontend (`quickshell/`)**: Built on Quickshell and QtQuick Wayland layershell (`WlrLayer.Overlay`). Renders real-time display topology, physical monitor and laptop chassis mockups, projector light cones, and preset controls. Runs statelessly and exits upon mode execution.
 - **Engine (`scripts/toggle-presentation.sh`)**: Queries `hyprctl monitors all -j` and parse output states using `jq`. Detects active outputs, maximum supported refresh rates, and primary display roles. Dynamically determines whether the host runs standard Hyprland keyword syntax or Lua dispatchers (`hl.monitor`), applying configurations atomically.
-- **Failsafe System**: Prior to executing any layout change, the engine saves the current display configuration to `/tmp/hypr_display_switcher_prev_state.json` and spawns a background watchdog process. If the user does not confirm the new configuration within 15 seconds (or if video signal is lost), the watchdog reverts monitors to the saved snapshot.
+- **Failsafe System**: Prior to executing any layout change, the engine saves the current display configuration to `$XDG_RUNTIME_DIR/hypr_display_switcher_prev_state.json` and spawns a background watchdog process. If the user does not confirm the new configuration within 15 seconds (or if video signal is lost), the watchdog reverts monitors to the saved snapshot.
 
 ## Operating Modes
 
 1. **Laptop Screen Only (`1`)**: Powers off external outputs and sets the internal laptop panel to its native mode at `0x0`.
 2. **Mirror Display (`2`)**: Duplicates the laptop display stream to connected external displays or projectors.
-3. **Extend Desktop (`3`)**: Arranges displays side-by-side or stacked. Pressing `S` or `Tab` cycles the external display position between Left (`0x0`), Right (`+1920x0`), and Top (`0x0` stacked).
-4. **External Monitor Only (`4`)**: Disables the internal laptop screen and assigns primary desktop workspaces to the external display.
+3. **Extend Desktop (`3`)**: Arranges displays side-by-side or stacked. Pressing `S` or `Tab` cycles the external display position between Left, Right, and Top (stacked). Positions are computed from each display's resolution and scale.
+4. **External Display Only (`4`)**: Disables the internal laptop screen and assigns primary desktop workspaces to the external display.
 
 ## Keybindings & Navigation
 
@@ -33,13 +33,13 @@ When the studio overlay is open:
 
 | Key | Action |
 | :--- | :--- |
-| `1` | Select Laptop Screen Only mode |
-| `2` | Select Mirror Display mode |
-| `3` | Select Extend Desktop mode |
-| `4` | Select External Monitor Only mode |
+| `1` | Preview Laptop Screen Only |
+| `2` | Preview Mirror Display |
+| `3` | Preview Extend Desktop |
+| `4` | Preview External Display Only |
 | `S` / `Tab` | Cycle Extend arrangement (Left, Right, Top) |
 | `↑` / `↓` | Navigate preset list |
-| `Enter` | Apply selected configuration |
+| `Enter` / click | Apply the previewed configuration (choosing the layout that is already active just closes the overlay) |
 | `Esc` | Dismiss overlay without making changes |
 
 ### Confirmation Dialog Shortcuts
@@ -154,6 +154,7 @@ The core script can be controlled directly from terminal or custom scripts:
 ## Color Profile Calibration (ICC / ICM)
 
 The script checks for ICC color profiles matching connected monitors in:
+- `~/.config/hypr/profiles/<MODEL>_sRGB.icm` (model from `hyprctl monitors`, e.g. `F24G41F_sRGB.icm`)
 - `~/.config/hypr/profiles/<MONITOR_NAME>_sRGB.icm`
 - `~/.local/share/icc/<MONITOR_NAME>.icm` (or `.icc`)
 

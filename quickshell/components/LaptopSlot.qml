@@ -13,6 +13,7 @@ Column {
     property string fontMono: "monospace"
     property string previewMode: "extend"
     property string extendPosition: "left"
+    property real deskY: parent.height - 22
     property string laptopName: ""
     property string laptopRes: "1920 × 1080"
     property string laptopRefresh: ""
@@ -40,7 +41,7 @@ Column {
     }
 
     y: {
-        let baseY = parent.height - 22 - height;
+        let baseY = root.deskY - height;
         if (root.previewMode === "extend" && root.extendPosition === "top") {
             return baseY + 2;
         }
@@ -78,64 +79,64 @@ Column {
                 ? Qt.alpha(root.themeColors.mauve || "#cacb77", 0.45)
                 : Qt.alpha(root.themeColors.surface2 || "#36352c", 0.6))
 
+        // Same reading order as the external monitor card: role > which display > mode
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: 7
-            spacing: 1
+            anchors.margins: 8
+            spacing: 0
 
             RowLayout {
                 Layout.fillWidth: true
+                spacing: 6
                 Text {
-                    text: root.laptopName !== "" ? root.laptopName : "Internal"
-                    font.family: root.fontMono
-                    font.pixelSize: 9
-                    font.weight: Font.Bold
-                    color: root.isStandby
-                        ? Qt.alpha(root.themeColors.subtext1 || "#939182", 0.4)
-                        : (root.themeColors.text || "#e6e3d5")
-                }
-                Item { Layout.fillWidth: true }
-                Text {
-                    text: {
-                        if (root.isStandby) return "off";
-                        if (root.previewMode === "extend") {
-                            if (root.extendPosition === "right") return "left (0x0)";
-                            if (root.extendPosition === "top") return "below (+1080y)";
-                            return "right (+1920x0)";
-                        }
-                        return "primary (0x0)";
-                    }
+                    text: "Laptop"
                     font.family: root.fontSans
-                    font.pixelSize: 8
+                    font.pixelSize: 11
+                    font.weight: Font.DemiBold
+                    elide: Text.ElideRight
+                    Layout.fillWidth: true
                     color: root.isStandby
-                        ? Qt.alpha(root.themeColors.subtext1 || "#939182", 0.4)
-                        : ((root.previewMode === "mirror") ? (root.themeColors.mauve || "#cacb77") : (root.themeColors.subtext0 || "#c9c7b6"))
+                        ? Qt.alpha(root.themeColors.subtext1 || "#939182", 0.5)
+                        : (root.themeColors.subtext0 || "#c9c7b6")
+                }
+                Text {
+                    text: root.laptopName
+                    font.family: root.fontMono
+                    font.pixelSize: 10
+                    color: root.themeColors.subtext1 || "#939182"
                 }
             }
 
             Item { Layout.fillHeight: true }
 
             Text {
-                Layout.alignment: Qt.AlignHCenter
-                text: root.isStandby ? "Standby" : (root.previewMode === "mirror" ? ((root.laptopRefresh || "60Hz") + " (Source)") : (root.laptopRefresh || "60Hz"))
+                text: {
+                    if (root.isStandby) return "Off";
+                    if (root.previewMode === "mirror") return "Source";
+                    if (root.previewMode === "extend") {
+                        if (root.extendPosition === "right") return "Left";
+                        if (root.extendPosition === "top") return "Below";
+                        return "Right";
+                    }
+                    return "Main";
+                }
                 font.family: root.fontSans
-                font.pixelSize: root.isStandby ? 10 : 13
+                font.pixelSize: 16
                 font.weight: Font.DemiBold
                 color: root.isStandby
                     ? Qt.alpha(root.themeColors.subtext1 || "#939182", 0.6)
                     : (root.previewMode === "mirror" ? (root.themeColors.mauve || "#cacb77") : (root.themeColors.text || "#e6e3d5"))
             }
 
-            Item { Layout.fillHeight: true }
-
             Text {
-                text: root.laptopRes + (root.laptopRefresh !== "" ? (" (" + root.laptopRefresh + ")") : "")
+                Layout.topMargin: 2
+                visible: !root.isStandby
+                text: root.laptopRes + (root.laptopRefresh !== "" ? " · " + root.laptopRefresh : "")
                 font.family: root.fontMono
-                font.pixelSize: 9
-                font.letterSpacing: 0.2
-                color: root.isStandby
-                    ? Qt.alpha(root.themeColors.subtext1 || "#939182", 0.6)
-                    : Qt.alpha(root.themeColors.subtext1 || "#939182", 0.85)
+                font.pixelSize: 10
+                color: root.themeColors.subtext1 || "#939182"
+                elide: Text.ElideRight
+                Layout.fillWidth: true
             }
         }
     }

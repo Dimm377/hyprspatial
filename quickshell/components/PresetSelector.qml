@@ -23,9 +23,9 @@ Rectangle {
 
     function getModeDesc(item) {
         if (item.modeId === "extend") {
-            if (root.extendPosition === "right") return "Laptop on left (0x0) · External on right (+1920x0)";
-            if (root.extendPosition === "top") return "External on top (0x0) · Laptop below (+1080y)";
-            return "External on left (0x0) · Laptop on right (+1920x0)";
+            if (root.extendPosition === "right") return "External on the right of the laptop";
+            if (root.extendPosition === "top") return "External above the laptop";
+            return "External on the left of the laptop";
         }
         return item.desc;
     }
@@ -92,8 +92,8 @@ Rectangle {
 
                         // Keycap Badge (Monospace font for numbers)
                         Rectangle {
-                            width: 22
-                            height: 22
+                            width: 24
+                            height: 24
                             radius: 4
                             color: presetItem.isCurrent
                                 ? Qt.alpha(root.themeColors.mauve || "#cacb77", 0.20)
@@ -103,7 +103,7 @@ Rectangle {
                                 anchors.centerIn: parent
                                 text: modelData.key
                                 font.family: root.fontMono
-                                font.pixelSize: 10
+                                font.pixelSize: 11
                                 font.weight: Font.Bold
                                 color: presetItem.isCurrent
                                     ? (root.themeColors.mauve || "#cacb77")
@@ -139,7 +139,7 @@ Rectangle {
                                         ? "Applying…"
                                         : modelData.title
                                     font.family: root.fontSans
-                                    font.pixelSize: 12
+                                    font.pixelSize: 13
                                     font.weight: Font.DemiBold
                                     color: (root.applyingMode && presetItem.isFocused)
                                         ? (root.themeColors.mauve || "#cacb77")
@@ -147,12 +147,21 @@ Rectangle {
                                             ? (root.themeColors.text || "#e6e3d5")
                                             : (root.themeColors.subtext0 || "#c9c7b6"))
                                 }
+
+                                Text {
+                                    visible: presetItem.isCurrent && !(root.applyingMode && presetItem.isFocused)
+                                    text: "Active"
+                                    font.family: root.fontSans
+                                    font.pixelSize: 11
+                                    font.weight: Font.Medium
+                                    color: root.themeColors.mauve || "#cacb77"
+                                }
                             }
 
                             Text {
-                                text: !presetItem.isAvailable ? "External display disconnected" : root.getModeDesc(modelData)
+                                text: !presetItem.isAvailable ? "Connect an external display to use this" : root.getModeDesc(modelData)
                                 font.family: root.fontSans
-                                font.pixelSize: 10
+                                font.pixelSize: 11
                                 font.weight: Font.Normal
                                 color: !presetItem.isAvailable
                                     ? Qt.alpha(root.themeColors.peach || "#f38ba8", 0.7)
@@ -166,8 +175,8 @@ Rectangle {
                         Rectangle {
                             id: posChip
                             visible: modelData.modeId === "extend" && presetItem.isAvailable
-                            implicitHeight: 20
-                            implicitWidth: posChipLayout.implicitWidth + 12
+                            implicitHeight: 24
+                            implicitWidth: posChipLayout.implicitWidth + 16
                             radius: 4
                             scale: posChipMa.pressed ? 0.94 : (posChipMa.containsMouse ? 1.03 : 1.0)
                             Behavior on scale { NumberAnimation { duration: 100; easing.type: Easing.OutCubic } }
@@ -184,21 +193,21 @@ Rectangle {
                                 spacing: 4
 
                                 Text {
-                                    text: "⇄"
-                                    font.family: root.fontMono
-                                    font.pixelSize: 9
-                                    color: root.themeColors.mauve || "#cacb77"
+                                    text: "Position"
+                                    font.family: root.fontSans
+                                    font.pixelSize: 11
+                                    color: root.themeColors.subtext1 || "#939182"
                                 }
                                 Text {
                                     text: {
-                                        if (root.extendPosition === "right") return "EXT ON RIGHT";
-                                        if (root.extendPosition === "top") return "EXT ON TOP";
-                                        return "EXT ON LEFT";
+                                        if (root.extendPosition === "right") return "Right";
+                                        if (root.extendPosition === "top") return "Above";
+                                        return "Left";
                                     }
-                                    font.family: root.fontMono
-                                    font.pixelSize: 8
-                                    font.weight: Font.Bold
-                                    color: root.themeColors.text || "#e6e3d5"
+                                    font.family: root.fontSans
+                                    font.pixelSize: 11
+                                    font.weight: Font.DemiBold
+                                    color: root.themeColors.mauve || "#cacb77"
                                 }
                             }
 
@@ -215,8 +224,8 @@ Rectangle {
                         id: itemMa
                         anchors.fill: parent
                         hoverEnabled: true
-                        onEntered: {
-                            root.modeHovered(modelData.modeId, index);
+                        onPositionChanged: {
+                            if (!presetItem.isFocused) root.modeHovered(modelData.modeId, index);
                         }
                         onClicked: {
                             root.modeSelected(modelData.arg, index);

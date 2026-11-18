@@ -12,6 +12,7 @@ Item {
     property string fontMono: "monospace"
     property string previewMode: "mirror"
     property string extMonitorName: ""
+    property string extMonitorLabel: ""
 
     readonly property real lensX: width - 8
     readonly property real lensY: 25
@@ -44,41 +45,27 @@ Item {
                 anchors.margins: 8
                 spacing: 6
 
+                // Same reading order as the monitor cards: which display, then role
                 ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: 2
-
-                    RowLayout {
-                        spacing: 4
-
-                        Rectangle {
-                            width: 5
-                            height: 5
-                            radius: 2.5
-                            color: root.themeColors.green || "#c9c8a5"
-                        }
-
-                        Text {
-                            text: "PROJECTOR"
-                            font.family: root.fontSans
-                            font.pixelSize: 9
-                            font.weight: Font.Bold
-                            color: root.themeColors.mauve || "#cacb77"
-                        }
-                    }
+                    spacing: 0
 
                     Text {
-                        text: root.extMonitorName !== "" ? root.extMonitorName : "External"
-                        font.family: root.fontMono
-                        font.pixelSize: 8
-                        color: root.themeColors.text || "#e6e3d5"
-                    }
-
-                    Text {
-                        text: "Mirror Duplicate"
+                        text: root.extMonitorLabel !== "" ? root.extMonitorLabel : "External"
                         font.family: root.fontSans
-                        font.pixelSize: 8
-                        color: root.themeColors.subtext1 || "#939182"
+                        font.pixelSize: 11
+                        font.weight: Font.DemiBold
+                        elide: Text.ElideRight
+                        Layout.fillWidth: true
+                        color: root.themeColors.subtext0 || "#c9c7b6"
+                    }
+
+                    Text {
+                        text: "Mirrored"
+                        font.family: root.fontSans
+                        font.pixelSize: 16
+                        font.weight: Font.DemiBold
+                        color: root.themeColors.mauve || "#cacb77"
                     }
                 }
 

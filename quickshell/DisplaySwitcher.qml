@@ -25,13 +25,15 @@ PanelWindow {
 
     property string extMonitorName: ""
     property string extMonitorDesc: ""
+    property string extMonitorModel: ""   // card identity: the model alone fits a miniature card
     property string extMonitorRefresh: ""
     property string extMonitorRes: "1920 × 1080"
     property string laptopName: ""
-    property string laptopDesc: "Internal Display"
     property string laptopRefresh: ""
     property string laptopRes: "1920 × 1080"
     property string extendPosition: "left"
+    property string currentExtendPosition: "left"   // what is applied now; extendPosition is the preview
+    property int otherDisplays: 0
     property string currentMode: "extend"
     property string previewMode: currentMode
     property int selectedIndex: 0
@@ -62,13 +64,13 @@ PanelWindow {
             arg: "--extend",
             key: "3",
             title: "Extend Desktop",
-            desc: "External on left (0x0) · Laptop on right (+1920x0)"
+            desc: ""
         },
         {
             modeId: "projector_only",
             arg: "--projector-only",
             key: "4",
-            title: "External Monitor Only",
+            title: "External Display Only",
             desc: "External display only · laptop screen powered off"
         }
     ]
@@ -150,17 +152,11 @@ PanelWindow {
                         if (laptop.refreshRate) {
                             window.laptopRefresh = Math.round(laptop.refreshRate) + "Hz";
                         }
-                        if (laptop.make) {
-                            window.laptopDesc = window.formatCleanMonitorDesc(laptop.make, laptop.model, laptop.description, "Internal Display");
-                        } else if (laptop.model) {
-                            window.laptopDesc = window.sanitizeMonitorDesc(laptop.model);
-                        } else {
-                            window.laptopDesc = "Internal Display";
-                        }
                     }
                     if (ext) {
                         window.extMonitorName = ext.name;
                         window.extMonitorDesc = window.formatCleanMonitorDesc(ext.make, ext.model, ext.description, ext.name);
+                        window.extMonitorModel = window.sanitizeMonitorDesc(ext.model) || window.extMonitorDesc;
                         window.extMonitorRefresh = ext.refreshRate ? (Math.round(ext.refreshRate) + "Hz") : "";
                         if (ext.width && ext.height) {
                             window.extMonitorRes = ext.width + " × " + ext.height;
@@ -192,6 +188,8 @@ PanelWindow {
                         window.extMonitorRefresh = "";
                         window.currentMode = "laptop_only";
                     }
+                    window.currentExtendPosition = window.extendPosition;
+                    window.otherDisplays = Math.max(0, mons.length - (laptop ? 1 : 0) - (ext ? 1 : 0));
                     window.previewMode = window.currentMode;
 
                     for (let j = 0; j < window.modesList.length; j++) {
@@ -218,7 +216,7 @@ PanelWindow {
             } else {
                 window.applyingMode = false;
                 let errMsg = applyErr.text.trim();
-                window.errorMessage = errMsg ? errMsg : ("Failed to switch mode (exit " + exitCode + ")");
+                window.errorMessage = errMsg ? errMsg : ("Couldn't switch displays (exit code " + exitCode + ")");
                 errorTimer.restart();
             }
         }
@@ -306,8 +304,15 @@ PanelWindow {
     function selectMode(arg) {
         if (window.applyingMode) return;
         if (arg !== "--laptop-only" && window.extMonitorName === "") {
-            window.errorMessage = "External display disconnected";
+            window.errorMessage = "No external display connected";
             errorTimer.restart();
+            return;
+        }
+        // Already the active layout: a real switch would only flicker and pop the 15s confirm dialog
+        let mode = window.modesList.find(m => m.arg === arg);
+        if (mode && mode.modeId === window.currentMode
+                && (mode.modeId !== "extend" || window.extendPosition === window.currentExtendPosition)) {
+            closeWindow();
             return;
         }
         window.errorMessage = "";
@@ -338,12 +343,16 @@ PanelWindow {
         }
     }
 
+    function moveSelection(delta) {
+        window.selectedIndex = (window.selectedIndex + delta + window.modesList.length) % window.modesList.length;
+        window.previewMode = window.modesList[window.selectedIndex].modeId;
+    }
+
     function selectModeByKey(keyStr) {
         for (let i = 0; i < window.modesList.length; i++) {
             if (window.modesList[i].key === keyStr) {
                 window.selectedIndex = i;
                 window.previewMode = window.modesList[i].modeId;
-                selectMode(window.modesList[i].arg);
                 break;
             }
         }
@@ -363,15 +372,13 @@ PanelWindow {
     Shortcut {
         sequence: "Up"
         onActivated: {
-            window.selectedIndex = (window.selectedIndex - 1 + window.modesList.length) % window.modesList.length;
-            window.previewMode = window.modesList[window.selectedIndex].modeId;
+            window.moveSelection(-1);
         }
     }
     Shortcut {
         sequence: "Down"
         onActivated: {
-            window.selectedIndex = (window.selectedIndex + 1) % window.modesList.length;
-            window.previewMode = window.modesList[window.selectedIndex].modeId;
+            window.moveSelection(1);
         }
     }
     Shortcut {
@@ -465,12 +472,10 @@ PanelWindow {
                 closeWindow();
                 event.accepted = true;
             } else if (event.key === Qt.Key_Up) {
-                window.selectedIndex = (window.selectedIndex - 1 + window.modesList.length) % window.modesList.length;
-                window.previewMode = window.modesList[window.selectedIndex].modeId;
+                window.moveSelection(-1);
                 event.accepted = true;
             } else if (event.key === Qt.Key_Down) {
-                window.selectedIndex = (window.selectedIndex + 1) % window.modesList.length;
-                window.previewMode = window.modesList[window.selectedIndex].modeId;
+                window.moveSelection(1);
                 event.accepted = true;
             } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                 if (window.selectedIndex >= 0 && window.selectedIndex < window.modesList.length) {
@@ -498,14 +503,8 @@ PanelWindow {
             HeaderBar {
                 themeColors: window.themeColors
                 fontSans: window.fontSans
-                fontMono: window.fontMono
-                extMonitorName: window.extMonitorName
-                extMonitorDesc: window.extMonitorDesc
-                extMonitorRefresh: window.extMonitorRefresh
-                laptopName: window.laptopName
-                laptopDesc: window.laptopDesc
-                laptopRefresh: window.laptopRefresh
                 errorMessage: window.errorMessage
+                otherDisplays: window.otherDisplays
             }
 
             // 2. Body Split: Spatial Viewport (Left) + Preset Selector (Right)
@@ -523,6 +522,7 @@ PanelWindow {
                     previewMode: window.previewMode
                     extendPosition: window.extendPosition
                     extMonitorName: window.extMonitorName
+                    extMonitorLabel: window.extMonitorName !== "" ? window.extMonitorModel : ""
                     extMonitorRes: window.extMonitorRes
                     extMonitorRefresh: window.extMonitorRefresh
                     laptopName: window.laptopName
@@ -568,6 +568,7 @@ PanelWindow {
                 themeColors: window.themeColors
                 fontSans: window.fontSans
                 fontMono: window.fontMono
+                showPosition: window.previewMode === "extend"
             }
         }
     }

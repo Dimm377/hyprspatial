@@ -10,6 +10,7 @@ Rectangle {
     property var themeColors: ({})
     property string fontSans: "sans-serif"
     property string fontMono: "monospace"
+    property bool showPosition: true
 
     Rectangle {
         anchors.top: parent.top
@@ -28,46 +29,48 @@ Rectangle {
         RowLayout {
             spacing: 4
             Text {
-                text: "1-4"
+                text: "1–4"
                 font.family: root.fontMono
-                font.pixelSize: 9
+                font.pixelSize: 11
                 font.weight: Font.Bold
                 color: root.themeColors.subtext0 || "#c9c7b6"
             }
             Text {
-                text: "Select"
+                text: "Choose"
                 font.family: root.fontSans
-                font.pixelSize: 9
+                font.pixelSize: 11
                 color: root.themeColors.subtext1 || "#939182"
             }
         }
 
         Text {
+            visible: root.showPosition
             text: "·"
-            font.pixelSize: 9
+            font.pixelSize: 11
             color: root.themeColors.surface2 || "#36352c"
         }
 
         RowLayout {
+            visible: root.showPosition
             spacing: 4
             Text {
                 text: "S / Tab"
                 font.family: root.fontMono
-                font.pixelSize: 9
+                font.pixelSize: 11
                 font.weight: Font.Bold
                 color: root.themeColors.subtext0 || "#c9c7b6"
             }
             Text {
-                text: "Swap Position"
+                text: "Position"
                 font.family: root.fontSans
-                font.pixelSize: 9
+                font.pixelSize: 11
                 color: root.themeColors.subtext1 || "#939182"
             }
         }
 
         Text {
             text: "·"
-            font.pixelSize: 9
+            font.pixelSize: 11
             color: root.themeColors.surface2 || "#36352c"
         }
 
@@ -76,14 +79,14 @@ Rectangle {
             Text {
                 text: "↵"
                 font.family: root.fontMono
-                font.pixelSize: 9
+                font.pixelSize: 11
                 font.weight: Font.Bold
                 color: root.themeColors.subtext0 || "#c9c7b6"
             }
             Text {
                 text: "Apply"
                 font.family: root.fontSans
-                font.pixelSize: 9
+                font.pixelSize: 11
                 color: root.themeColors.subtext1 || "#939182"
             }
         }
@@ -95,14 +98,14 @@ Rectangle {
             Text {
                 text: "Esc"
                 font.family: root.fontMono
-                font.pixelSize: 9
+                font.pixelSize: 11
                 font.weight: Font.Bold
                 color: root.themeColors.subtext0 || "#c9c7b6"
             }
             Text {
                 text: "Close"
                 font.family: root.fontSans
-                font.pixelSize: 9
+                font.pixelSize: 11
                 color: root.themeColors.subtext1 || "#939182"
             }
         }

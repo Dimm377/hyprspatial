@@ -124,9 +124,9 @@ PanelWindow {
             easing.type: Easing.OutQuad
         }
 
+        // Swallow clicks: a stray click outside must not keep a possibly broken layout
         MouseArea {
             anchors.fill: parent
-            onClicked: confirmKeep()
         }
     }
 
@@ -135,7 +135,7 @@ PanelWindow {
         id: dialogCard
         anchors.centerIn: parent
         implicitWidth: confirmWindow.s(410)
-        implicitHeight: confirmWindow.s(156)
+        implicitHeight: confirmWindow.s(168)
         width: implicitWidth
         height: implicitHeight
 
@@ -201,7 +201,7 @@ PanelWindow {
                 Text {
                     text: "Keep display settings?"
                     font.family: confirmWindow.fontSans
-                    font.pixelSize: confirmWindow.s(14)
+                    font.pixelSize: confirmWindow.s(15)
                     font.weight: Font.DemiBold
                     color: confirmWindow.themeColors.text || "#e6e3d5"
                 }
@@ -222,7 +222,7 @@ PanelWindow {
                         anchors.centerIn: parent
                         text: confirmWindow.countdown + "s remaining"
                         font.family: confirmWindow.fontMono
-                        font.pixelSize: confirmWindow.s(9.5)
+                        font.pixelSize: confirmWindow.s(11)
                         font.weight: Font.Bold
                         color: confirmWindow.countdown <= 5
                             ? (confirmWindow.themeColors.peach || "#f38ba8")
@@ -234,9 +234,9 @@ PanelWindow {
             // Description Body
             Text {
                 Layout.fillWidth: true
-                text: "The new configuration will be automatically reverted if you do not confirm within 15 seconds."
+                text: "If you don't choose, your previous layout comes back when the timer ends."
                 font.family: confirmWindow.fontSans
-                font.pixelSize: confirmWindow.s(10.5)
+                font.pixelSize: confirmWindow.s(12)
                 color: confirmWindow.themeColors.subtext0 || "#c9c7b6"
                 wrapMode: Text.WordWrap
             }
@@ -279,14 +279,15 @@ PanelWindow {
                         Text {
                             text: "Revert"
                             font.family: confirmWindow.fontSans
-                            font.pixelSize: confirmWindow.s(11)
+                            font.pixelSize: confirmWindow.s(12)
                             font.weight: Font.Medium
                             color: confirmWindow.themeColors.subtext0 || "#c9c7b6"
                         }
                         Text {
-                            text: "[Esc]"
+                            text: "Esc"
                             font.family: confirmWindow.fontMono
-                            font.pixelSize: confirmWindow.s(9)
+                            font.pixelSize: confirmWindow.s(11)
+                            font.weight: Font.Bold
                             color: confirmWindow.themeColors.subtext1 || "#939182"
                         }
                     }
@@ -319,14 +320,14 @@ PanelWindow {
                         Text {
                             text: "Keep Changes"
                             font.family: confirmWindow.fontSans
-                            font.pixelSize: confirmWindow.s(11)
+                            font.pixelSize: confirmWindow.s(12)
                             font.weight: Font.SemiBold
                             color: confirmWindow.themeColors.base || "#0f0f07"
                         }
                         Text {
-                            text: "[↵]"
+                            text: "↵"
                             font.family: confirmWindow.fontMono
-                            font.pixelSize: confirmWindow.s(9)
+                            font.pixelSize: confirmWindow.s(11)
                             font.weight: Font.Bold
                             color: confirmWindow.themeColors.base || "#0f0f07"
                         }

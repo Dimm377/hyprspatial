@@ -15,6 +15,7 @@ Rectangle {
     property string previewMode: "extend"
     property string extendPosition: "left"
     property string extMonitorName: ""
+    property string extMonitorLabel: ""
     property string extMonitorRes: "1920 × 1080"
     property string extMonitorRefresh: ""
     property string laptopName: ""
@@ -52,10 +53,15 @@ Rectangle {
                 anchors.fill: parent
                 clip: true
 
+                // Desk line the displays stand on. Side-by-side scenes sit centered in the canvas;
+                // the stacked "top" scene needs the full height, so its desk drops to the bottom.
+                readonly property bool stacked: root.previewMode === "extend" && root.extendPosition === "top"
+                property real deskY: stacked ? height - 22 : Math.round((height + extSlot.height) / 2)
+                Behavior on deskY { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+
                 // Table / Desk Baseline
                 Rectangle {
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 22
+                    y: canvasSurface.deskY
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.leftMargin: 16
@@ -94,12 +100,7 @@ Rectangle {
                         }
                         return (root.previewMode === "projector_only") ? 22 : 16;
                     }
-                    y: {
-                        if (root.previewMode === "extend" && root.extendPosition === "top") {
-                            return 6;
-                        }
-                        return parent.height - 22 - height;
-                    }
+                    y: canvasSurface.stacked ? 6 : canvasSurface.deskY - height
 
                     Behavior on x { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
                     Behavior on y { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
@@ -115,6 +116,7 @@ Rectangle {
                         previewMode: root.previewMode
                         extendPosition: root.extendPosition
                         extMonitorName: root.extMonitorName
+                        extMonitorLabel: root.extMonitorLabel
                         extMonitorRes: root.extMonitorRes
                         extMonitorRefresh: root.extMonitorRefresh
                     }
@@ -127,6 +129,7 @@ Rectangle {
                         fontMono: root.fontMono
                         previewMode: root.previewMode
                         extMonitorName: root.extMonitorName
+                        extMonitorLabel: root.extMonitorLabel
                         onYChanged: if (root.previewMode === "mirror") beamCanvas.requestPaint()
                     }
                 }
@@ -140,6 +143,7 @@ Rectangle {
                     fontMono: root.fontMono
                     previewMode: root.previewMode
                     extendPosition: root.extendPosition
+                    deskY: canvasSurface.deskY
                     laptopName: root.laptopName
                     laptopRes: root.laptopRes
                     laptopRefresh: root.laptopRefresh
